@@ -1,9 +1,9 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { AlertTriangle, CheckCircle2, FileQuestion, Inbox } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { examApi, progressApi } from '../../api/endpoints'
 import { useToast } from '../../context/ToastContext'
-import type { ModuleExamFocus } from '../../types'
 
 const priorityColumns: {
   key: 'high_priority_topics' | 'medium_priority_topics' | 'low_priority_topics'
@@ -15,37 +15,35 @@ const priorityColumns: {
   { key: 'low_priority_topics', label: 'Low Priority', dot: 'bg-text-faint' },
 ]
 
-export default function Overview({
-  subject,
-  onProgressChange,
-}: {
-  subject: string
-  onProgressChange: () => void
-}) {
-  const [modules, setModules] = useState<ModuleExamFocus[]>([])
-  const [loading, setLoading] = useState(true)
+export default function Overview({ subject }: { subject: string }) {
+  const { data: modules = [], isLoading: loading } = useQuery({
+    queryKey: ['exam', 'overview', subject],
+    queryFn: () => examApi.overview(subject),
+    enabled: !!subject,
+  })
   const [pendingKey, setPendingKey] = useState<string | null>(null)
   const { showToast } = useToast()
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    setLoading(true)
-    examApi
-      .overview(subject)
-      .then(setModules)
-      .finally(() => setLoading(false))
-  }, [subject])
-
-  async function handleMark(topic: string, action: 'solved_pyq' | 'weak', key: string) {
-    setPendingKey(key)
-    try {
-      await progressApi.mark(subject, topic, action)
-      onProgressChange()
+  const markMutation = useMutation({
+    mutationFn: ({ topic, action }: { topic: string; action: 'solved_pyq' | 'weak' }) =>
+      progressApi.mark(subject, topic, action),
+    onSuccess: (_status, { topic, action }) => {
+      queryClient.invalidateQueries({ queryKey: ['progress', subject] })
       showToast(
         action === 'solved_pyq' ? `Marked "${topic}" as solved` : `Marked "${topic}" as weak`,
         action === 'solved_pyq' ? 'success' : 'info',
       )
+    },
+    onError: () => showToast('Could not update progress. Try again.', 'error'),
+  })
+
+  async function handleMark(topic: string, action: 'solved_pyq' | 'weak', key: string) {
+    setPendingKey(key)
+    try {
+      await markMutation.mutateAsync({ topic, action })
     } catch {
-      showToast('Could not update progress. Try again.', 'error')
+      // toast already shown by the mutation's onError
     } finally {
       setPendingKey(null)
     }

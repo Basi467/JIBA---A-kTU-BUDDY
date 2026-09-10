@@ -1,3 +1,4 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
   AlertTriangle,
@@ -14,72 +15,57 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { examApi, progressApi } from '../../api/endpoints'
 import { useToast } from '../../context/ToastContext'
 import Markdown, { MarkdownInline } from '../Markdown'
-import type { TeachLesson, TeachTopicItem } from '../../types'
 
-export default function TeachHighPriority({
-  subject,
-  onProgressChange,
-}: {
-  subject: string
-  onProgressChange: () => void
-}) {
-  const [queue, setQueue] = useState<TeachTopicItem[] | null>(null)
+export default function TeachHighPriority({ subject }: { subject: string }) {
+  const [started, setStarted] = useState(false)
   const [index, setIndex] = useState(0)
-  const [lesson, setLesson] = useState<TeachLesson | null>(null)
-  const [loadingLesson, setLoadingLesson] = useState(false)
-  const [starting, setStarting] = useState(false)
-  const [marking, setMarking] = useState(false)
   const { showToast } = useToast()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
-    setQueue(null)
+    setStarted(false)
     setIndex(0)
-    setLesson(null)
   }, [subject])
+
+  const { data: queue, isFetching: starting } = useQuery({
+    queryKey: ['exam', 'teachQueue', subject],
+    queryFn: () => examApi.teachQueue(subject),
+    enabled: started,
+  })
 
   const current = queue && index < queue.length ? queue[index] : null
 
-  useEffect(() => {
-    if (!current) return
-    setLoadingLesson(true)
-    setLesson(null)
-    examApi
-      .teachTopic(subject, current.topic_name)
-      .then(setLesson)
-      .finally(() => setLoadingLesson(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current?.topic_name, index])
+  const { data: lesson, isLoading: loadingLesson } = useQuery({
+    queryKey: ['exam', 'teachTopic', subject, current?.topic_name],
+    queryFn: () => examApi.teachTopic(subject, current!.topic_name),
+    enabled: !!current,
+  })
 
-  async function start() {
-    setStarting(true)
-    try {
-      const items = await examApi.teachQueue(subject)
-      setQueue(items)
-      setIndex(0)
-    } finally {
-      setStarting(false)
-    }
-  }
-
-  async function mark(action: 'weak' | 'completed') {
-    if (!current) return
-    setMarking(true)
-    try {
-      await progressApi.mark(subject, current.topic_name, action)
-      onProgressChange()
+  const markMutation = useMutation({
+    mutationFn: (action: 'weak' | 'completed') => progressApi.mark(subject, current!.topic_name, action),
+    onSuccess: (_status, action) => {
+      queryClient.invalidateQueries({ queryKey: ['progress', subject] })
       showToast(
-        action === 'completed' ? `"${current.topic_name}" marked done` : `"${current.topic_name}" marked weak`,
+        action === 'completed' ? `"${current!.topic_name}" marked done` : `"${current!.topic_name}" marked weak`,
         action === 'completed' ? 'success' : 'info',
       )
       setIndex((i) => i + 1)
+    },
+    onError: () => showToast('Could not update progress. Try again.', 'error'),
+  })
+
+  async function mark(action: 'weak' | 'completed') {
+    if (!current) return
+    try {
+      await markMutation.mutateAsync(action)
     } catch {
-      showToast('Could not update progress. Try again.', 'error')
-    } finally {
-      setMarking(false)
+      // toast already shown by the mutation's onError
     }
   }
 
-  if (!queue) {
+  const marking = markMutation.isPending
+
+  if (!started || !queue) {
     return (
       <div className="card-elevated flex flex-col items-center rounded-2xl border border-border bg-surface/40 p-10 text-center">
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-border-strong bg-surface">
@@ -90,7 +76,7 @@ export default function TeachHighPriority({
         </p>
         <motion.button
           whileTap={{ scale: 0.97 }}
-          onClick={start}
+          onClick={() => setStarted(true)}
           disabled={starting}
           className="flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-accent/15 transition-colors hover:bg-accent-hover disabled:opacity-60"
         >

@@ -88,15 +88,7 @@ function QuickStudyPlan({ subject, hoursPerDay }: { subject: string; hoursPerDay
   )
 }
 
-export default function ExamMode({
-  subject,
-  hoursPerDay,
-  onProgressChange,
-}: {
-  subject: string
-  hoursPerDay: number
-  onProgressChange: () => void
-}) {
+export default function ExamMode({ subject, hoursPerDay }: { subject: string; hoursPerDay: number }) {
   const [tab, setTab] = useState<Tab>('overview')
 
   return (
@@ -134,9 +126,9 @@ export default function ExamMode({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {tab === 'overview' && <Overview subject={subject} onProgressChange={onProgressChange} />}
-        {tab === 'teach' && <TeachHighPriority subject={subject} onProgressChange={onProgressChange} />}
-        {tab === 'pyq' && <SolveRepeatedPyqs subject={subject} onProgressChange={onProgressChange} />}
+        {tab === 'overview' && <Overview subject={subject} />}
+        {tab === 'teach' && <TeachHighPriority subject={subject} />}
+        {tab === 'pyq' && <SolveRepeatedPyqs subject={subject} />}
       </motion.div>
     </div>
   )

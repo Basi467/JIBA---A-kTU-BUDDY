@@ -1,23 +1,17 @@
+import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { ChevronRight, Target } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { priorityApi } from '../api/endpoints'
 import type { ModuleTopicPriority } from '../types'
 
 export default function PredictedTopicsPanel({ subject }: { subject: string }) {
-  const [items, setItems] = useState<ModuleTopicPriority[]>([])
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (!subject) return
-    setLoading(true)
-    priorityApi
-      .predicted(subject)
-      .then(setItems)
-      .catch(() => setItems([]))
-      .finally(() => setLoading(false))
-  }, [subject])
+  const { data: items = [], isLoading: loading } = useQuery({
+    queryKey: ['priority', subject],
+    queryFn: () => priorityApi.predicted(subject),
+    enabled: !!subject,
+  })
 
   const highPriority = items.filter((i) => i.priority_label === 'High')
 

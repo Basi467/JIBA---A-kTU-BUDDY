@@ -1,3 +1,4 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import {
   AlertTriangle,
@@ -11,75 +12,60 @@ import { useEffect, useState } from 'react'
 import { examApi, progressApi } from '../../api/endpoints'
 import { useToast } from '../../context/ToastContext'
 import Markdown from '../Markdown'
-import type { TeachQuestionItem } from '../../types'
 
-export default function SolveRepeatedPyqs({
-  subject,
-  onProgressChange,
-}: {
-  subject: string
-  onProgressChange: () => void
-}) {
-  const [queue, setQueue] = useState<TeachQuestionItem[] | null>(null)
+export default function SolveRepeatedPyqs({ subject }: { subject: string }) {
+  const [started, setStarted] = useState(false)
   const [index, setIndex] = useState(0)
-  const [answer, setAnswer] = useState<string | null>(null)
-  const [loadingAnswer, setLoadingAnswer] = useState(false)
-  const [starting, setStarting] = useState(false)
-  const [marking, setMarking] = useState(false)
   const { showToast } = useToast()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
-    setQueue(null)
+    setStarted(false)
     setIndex(0)
-    setAnswer(null)
   }, [subject])
+
+  const { data: queue, isFetching: starting } = useQuery({
+    queryKey: ['exam', 'pyqQueue', subject],
+    queryFn: () => examApi.pyqQueue(subject, 4),
+    enabled: started,
+  })
 
   const current = queue && index < queue.length ? queue[index] : null
 
-  useEffect(() => {
-    if (!current) return
-    setLoadingAnswer(true)
-    setAnswer(null)
-    examApi
-      .answerQuestion(subject, current.question_text, current.topic_name)
-      .then(setAnswer)
-      .finally(() => setLoadingAnswer(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, current?.question_text])
+  const { data: answer, isLoading: loadingAnswer } = useQuery({
+    queryKey: ['exam', 'answerQuestion', subject, current?.question_text],
+    queryFn: () => examApi.answerQuestion(subject, current!.question_text, current!.topic_name),
+    enabled: !!current,
+  })
 
-  async function start() {
-    setStarting(true)
-    try {
-      const items = await examApi.pyqQueue(subject, 4)
-      setQueue(items)
-      setIndex(0)
-    } finally {
-      setStarting(false)
-    }
-  }
+  const markMutation = useMutation({
+    mutationFn: (action: 'solved_pyq' | 'weak') => progressApi.mark(subject, current!.topic_name!, action),
+    onSuccess: (_status, action) => {
+      queryClient.invalidateQueries({ queryKey: ['progress', subject] })
+      showToast(
+        action === 'solved_pyq' ? 'Nice — marked as solved' : `Marked "${current!.topic_name}" as weak`,
+        action === 'solved_pyq' ? 'success' : 'info',
+      )
+      setIndex((i) => i + 1)
+    },
+    onError: () => showToast('Could not update progress. Try again.', 'error'),
+  })
 
   async function mark(action: 'solved_pyq' | 'weak') {
     if (!current?.topic_name) {
       setIndex((i) => i + 1)
       return
     }
-    setMarking(true)
     try {
-      await progressApi.mark(subject, current.topic_name, action)
-      onProgressChange()
-      showToast(
-        action === 'solved_pyq' ? 'Nice — marked as solved' : `Marked "${current.topic_name}" as weak`,
-        action === 'solved_pyq' ? 'success' : 'info',
-      )
-      setIndex((i) => i + 1)
+      await markMutation.mutateAsync(action)
     } catch {
-      showToast('Could not update progress. Try again.', 'error')
-    } finally {
-      setMarking(false)
+      // toast already shown by the mutation's onError
     }
   }
 
-  if (!queue) {
+  const marking = markMutation.isPending
+
+  if (!started || !queue) {
     return (
       <div className="card-elevated flex flex-col items-center rounded-2xl border border-border bg-surface/40 p-10 text-center">
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-border-strong bg-surface">
@@ -90,7 +76,7 @@ export default function SolveRepeatedPyqs({
         </p>
         <motion.button
           whileTap={{ scale: 0.97 }}
-          onClick={start}
+          onClick={() => setStarted(true)}
           disabled={starting}
           className="flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-accent/15 transition-colors hover:bg-accent-hover disabled:opacity-60"
         >
@@ -145,7 +131,7 @@ export default function SolveRepeatedPyqs({
 
       <div>
         <p className="mb-1 text-sm font-semibold text-text">Exam-Style Answer</p>
-        {loadingAnswer || answer === null ? (
+        {loadingAnswer || !answer ? (
           <div className="h-24 animate-pulse rounded-lg bg-surface" />
         ) : (
           <div className="text-text-muted">

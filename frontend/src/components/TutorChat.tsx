@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Bot, CalendarDays, SendHorizontal, Sparkles } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -83,21 +84,29 @@ interface DisplayMessage extends ChatMessage {
 }
 
 export default function TutorChat({ subject, hoursPerDay }: { subject: string; hoursPerDay: number }) {
+  const { data: history, isFetched: historyLoaded } = useQuery({
+    queryKey: ['chat', 'history', subject],
+    queryFn: () => chatApi.history(subject),
+    enabled: !!subject,
+    // Local `messages` below is the live source of truth once loaded (it
+    // also carries locally-synthesized study-plan cards /chat/history never
+    // returns) — a background refetch overwriting it mid-conversation would
+    // silently drop those, so this query is deliberately fetch-once.
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+  })
+
+  // Local state, not the query cache directly: locally-appended messages
+  // carry a `studyPlan` card that /chat/history never returns, and are
+  // appended optimistically before the server round-trip completes.
   const [messages, setMessages] = useState<DisplayMessage[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
-  const [historyLoaded, setHistoryLoaded] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setHistoryLoaded(false)
-    setMessages([])
-    if (!subject) return
-    chatApi
-      .history(subject)
-      .then(setMessages)
-      .finally(() => setHistoryLoaded(true))
-  }, [subject])
+    setMessages(history ?? [])
+  }, [subject, history])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

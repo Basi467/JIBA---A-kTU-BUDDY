@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -6,26 +7,22 @@ import ExamMode from '../components/exam/ExamMode'
 import InsightsPanel from '../components/InsightsPanel'
 import TopBar from '../components/TopBar'
 import TutorChat from '../components/TutorChat'
-import type { Subject } from '../types'
 
 export default function DashboardPage() {
-  const [subjects, setSubjects] = useState<Subject[]>([])
+  const { data: subjects = [], isLoading: loading } = useQuery({
+    queryKey: ['subjects'],
+    queryFn: subjectsApi.list,
+  })
   const [selectedSubject, setSelectedSubject] = useState('')
   const [examMode, setExamMode] = useState(false)
   const [hoursPerDay, setHoursPerDay] = useState(3)
-  const [refreshKey, setRefreshKey] = useState(0)
   const [insightsOpen, setInsightsOpen] = useState(false)
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    subjectsApi
-      .list()
-      .then((list) => {
-        setSubjects(list)
-        if (list.length > 0) setSelectedSubject(list[0].subject_name)
-      })
-      .finally(() => setLoading(false))
-  }, [])
+    if (!selectedSubject && subjects.length > 0) {
+      setSelectedSubject(subjects[0].subject_name)
+    }
+  }, [subjects, selectedSubject])
 
   if (loading) {
     return (
@@ -68,11 +65,7 @@ export default function DashboardPage() {
               className="h-full"
             >
               {examMode ? (
-                <ExamMode
-                  subject={selectedSubject}
-                  hoursPerDay={hoursPerDay}
-                  onProgressChange={() => setRefreshKey((k) => k + 1)}
-                />
+                <ExamMode subject={selectedSubject} hoursPerDay={hoursPerDay} />
               ) : (
                 <TutorChat subject={selectedSubject} hoursPerDay={hoursPerDay} />
               )}
@@ -81,7 +74,7 @@ export default function DashboardPage() {
         </main>
 
         <aside className="hidden w-80 shrink-0 overflow-y-auto border-l border-border p-5 xl:block">
-          <InsightsPanel subject={selectedSubject} refreshKey={refreshKey} />
+          <InsightsPanel subject={selectedSubject} />
         </aside>
       </div>
 
@@ -100,15 +93,19 @@ export default function DashboardPage() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 320, damping: 34 }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Insights"
               className="fixed inset-y-0 right-0 z-50 w-full max-w-sm overflow-y-auto border-l border-border bg-bg p-5 xl:hidden"
             >
               <button
                 onClick={() => setInsightsOpen(false)}
+                aria-label="Close insights"
                 className="mb-4 flex h-8 w-8 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:border-accent hover:text-accent"
               >
                 <X size={15} />
               </button>
-              <InsightsPanel subject={selectedSubject} refreshKey={refreshKey} />
+              <InsightsPanel subject={selectedSubject} />
             </motion.aside>
           </>
         )}

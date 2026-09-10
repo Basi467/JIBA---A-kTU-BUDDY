@@ -1,8 +1,8 @@
+import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { progressApi } from '../api/endpoints'
-import type { ProgressSummary } from '../types'
 
 function Collapsible({
   title,
@@ -55,20 +55,14 @@ function Collapsible({
   )
 }
 
-export default function ProgressPanel({ subject, refreshKey }: { subject: string; refreshKey: number }) {
-  const [progress, setProgress] = useState<ProgressSummary | null>(null)
-  const [loading, setLoading] = useState(true)
+export default function ProgressPanel({ subject }: { subject: string }) {
+  const { data: progress, isLoading } = useQuery({
+    queryKey: ['progress', subject],
+    queryFn: () => progressApi.get(subject),
+    enabled: !!subject,
+  })
 
-  useEffect(() => {
-    if (!subject) return
-    setLoading(true)
-    progressApi
-      .get(subject)
-      .then(setProgress)
-      .finally(() => setLoading(false))
-  }, [subject, refreshKey])
-
-  if (loading || !progress) {
+  if (isLoading || !progress) {
     return <div className="h-40 animate-pulse rounded-xl bg-surface" />
   }
 
