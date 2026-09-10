@@ -43,6 +43,9 @@ export default function TopBar({
 
       <button
         onClick={() => onToggleExamMode(!examMode)}
+        role="switch"
+        aria-checked={examMode}
+        aria-label="Toggle exam mode"
         className={`flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
           examMode
             ? 'border-accent/40 bg-accent/15 text-accent'
@@ -64,6 +67,7 @@ export default function TopBar({
         <Popover.Trigger asChild>
           <button
             title="Study settings"
+            aria-label="Study settings"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-text-muted transition-colors hover:border-accent-2 hover:text-accent-2"
           >
             <Settings2 size={16} strokeWidth={2} />
@@ -76,8 +80,11 @@ export default function TopBar({
             className="animate-pop-in z-50 w-64 rounded-2xl border border-border bg-surface-2 p-4 shadow-2xl shadow-black/40"
           >
             <p className="mb-3 text-sm font-semibold text-text">Study Settings</p>
-            <label className="mb-1.5 block text-xs text-text-muted">Hours per day</label>
+            <label htmlFor="hours-per-day" className="mb-1.5 block text-xs text-text-muted">
+              Hours per day
+            </label>
             <input
+              id="hours-per-day"
               type="range"
               min={1}
               max={12}
@@ -96,6 +103,7 @@ export default function TopBar({
           onClick={onOpenInsights}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-text-muted transition-colors hover:border-accent-2 hover:text-accent-2 xl:hidden"
           title="Progress & insights"
+          aria-label="Progress & insights"
         >
           <BarChart3 size={16} strokeWidth={2} />
         </button>

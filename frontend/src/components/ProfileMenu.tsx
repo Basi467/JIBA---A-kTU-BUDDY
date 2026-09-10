@@ -11,7 +11,10 @@ export default function ProfileMenu() {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <button className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-accent-2 to-accent text-sm font-bold text-white shadow-md shadow-accent/20 transition-transform hover:scale-105">
+        <button
+          aria-label={`Account menu for ${user.name}`}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-accent-2 to-accent text-sm font-bold text-white shadow-md shadow-accent/20 transition-transform hover:scale-105"
+        >
           {initial}
         </button>
       </DropdownMenu.Trigger>

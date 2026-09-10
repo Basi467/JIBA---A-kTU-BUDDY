@@ -296,8 +296,11 @@ function RegisterForm({ onRegistered }: { onRegistered: () => void }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className={labelClass}>Full Name</label>
+        <label htmlFor="register-name" className={labelClass}>
+          Full Name
+        </label>
         <input
+          id="register-name"
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -306,8 +309,11 @@ function RegisterForm({ onRegistered }: { onRegistered: () => void }) {
         />
       </div>
       <div>
-        <label className={labelClass}>Email</label>
+        <label htmlFor="register-email" className={labelClass}>
+          Email
+        </label>
         <input
+          id="register-email"
           type="email"
           required
           value={email}
@@ -318,8 +324,11 @@ function RegisterForm({ onRegistered }: { onRegistered: () => void }) {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className={labelClass}>Password</label>
+          <label htmlFor="register-password" className={labelClass}>
+            Password
+          </label>
           <input
+            id="register-password"
             type="password"
             required
             value={password}
@@ -329,8 +338,11 @@ function RegisterForm({ onRegistered }: { onRegistered: () => void }) {
           />
         </div>
         <div>
-          <label className={labelClass}>Confirm</label>
+          <label htmlFor="register-confirm-password" className={labelClass}>
+            Confirm
+          </label>
           <input
+            id="register-confirm-password"
             type="password"
             required
             value={confirmPassword}
@@ -359,8 +371,11 @@ function RegisterForm({ onRegistered }: { onRegistered: () => void }) {
           <>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className={labelClass}>Scheme</label>
+                <label htmlFor="register-scheme" className={labelClass}>
+                  Scheme
+                </label>
                 <select
+                  id="register-scheme"
                   value={scheme}
                   onChange={(e) => handleSchemeChange(e.target.value)}
                   className={inputClass}
@@ -373,8 +388,11 @@ function RegisterForm({ onRegistered }: { onRegistered: () => void }) {
                 </select>
               </div>
               <div>
-                <label className={labelClass}>Dept.</label>
+                <label htmlFor="register-department" className={labelClass}>
+                  Dept.
+                </label>
                 <select
+                  id="register-department"
                   value={department}
                   onChange={(e) => handleDepartmentChange(e.target.value)}
                   className={inputClass}
@@ -387,8 +405,11 @@ function RegisterForm({ onRegistered }: { onRegistered: () => void }) {
                 </select>
               </div>
               <div>
-                <label className={labelClass}>Sem.</label>
+                <label htmlFor="register-semester" className={labelClass}>
+                  Sem.
+                </label>
                 <select
+                  id="register-semester"
                   value={semester}
                   onChange={(e) => setSemester(Number(e.target.value))}
                   className={inputClass}

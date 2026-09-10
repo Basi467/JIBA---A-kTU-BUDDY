@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Loader2, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { subjectsApi } from '../api/endpoints'
 import ExamMode from '../components/exam/ExamMode'
 import InsightsPanel from '../components/InsightsPanel'
@@ -17,12 +17,35 @@ export default function DashboardPage() {
   const [examMode, setExamMode] = useState(false)
   const [hoursPerDay, setHoursPerDay] = useState(3)
   const [insightsOpen, setInsightsOpen] = useState(false)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (!selectedSubject && subjects.length > 0) {
       setSelectedSubject(subjects[0].subject_name)
     }
   }, [subjects, selectedSubject])
+
+  function openInsights() {
+    previouslyFocusedRef.current = document.activeElement as HTMLElement
+    setInsightsOpen(true)
+  }
+
+  function closeInsights() {
+    setInsightsOpen(false)
+    previouslyFocusedRef.current?.focus()
+  }
+
+  useEffect(() => {
+    if (!insightsOpen) return
+    closeButtonRef.current?.focus()
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') closeInsights()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [insightsOpen])
 
   if (loading) {
     return (
@@ -51,7 +74,7 @@ export default function DashboardPage() {
         onToggleExamMode={setExamMode}
         hoursPerDay={hoursPerDay}
         onChangeHoursPerDay={setHoursPerDay}
-        onOpenInsights={() => setInsightsOpen(true)}
+        onOpenInsights={openInsights}
       />
 
       <div className="flex min-h-0 flex-1">
@@ -78,38 +101,30 @@ export default function DashboardPage() {
         </aside>
       </div>
 
-      <AnimatePresence>
-        {insightsOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setInsightsOpen(false)}
-              className="fixed inset-0 z-40 bg-black/60 xl:hidden"
-            />
-            <motion.aside
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 320, damping: 34 }}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Insights"
-              className="fixed inset-y-0 right-0 z-50 w-full max-w-sm overflow-y-auto border-l border-border bg-bg p-5 xl:hidden"
+      {insightsOpen && (
+        <>
+          <div onClick={closeInsights} className="fixed inset-0 z-40 bg-black/60 xl:hidden" />
+          <motion.aside
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 34 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Insights"
+            className="fixed inset-y-0 right-0 z-50 w-full max-w-sm overflow-y-auto border-l border-border bg-bg p-5 xl:hidden"
+          >
+            <button
+              ref={closeButtonRef}
+              onClick={closeInsights}
+              aria-label="Close insights"
+              className="mb-4 flex h-8 w-8 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:border-accent hover:text-accent"
             >
-              <button
-                onClick={() => setInsightsOpen(false)}
-                aria-label="Close insights"
-                className="mb-4 flex h-8 w-8 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:border-accent hover:text-accent"
-              >
-                <X size={15} />
-              </button>
-              <InsightsPanel subject={selectedSubject} />
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+              <X size={15} />
+            </button>
+            <InsightsPanel subject={selectedSubject} />
+          </motion.aside>
+        </>
+      )}
     </div>
   )
 }

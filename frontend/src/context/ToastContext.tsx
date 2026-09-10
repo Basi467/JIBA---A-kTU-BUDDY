@@ -44,13 +44,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="pointer-events-none fixed bottom-5 right-5 z-[100] flex flex-col items-end gap-2">
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="pointer-events-none fixed bottom-5 right-5 z-[100] flex flex-col items-end gap-2"
+      >
         <AnimatePresence>
           {toasts.map((toast) => {
             const Icon = ICONS[toast.variant]
             return (
               <motion.div
                 key={toast.id}
+                role={toast.variant === 'error' ? 'alert' : 'status'}
                 initial={{ opacity: 0, y: 12, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 40, transition: { duration: 0.15 } }}

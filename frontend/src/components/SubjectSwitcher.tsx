@@ -30,7 +30,10 @@ export default function SubjectSwitcher({
       }}
     >
       <Popover.Trigger asChild>
-        <button className="flex w-full min-w-0 max-w-xs items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-text transition-colors hover:border-accent-2 sm:max-w-sm">
+        <button
+          aria-label="Select subject"
+          className="flex w-full min-w-0 max-w-xs items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-medium text-text transition-colors hover:border-accent-2 sm:max-w-sm"
+        >
           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-2" />
           <span className="min-w-0 flex-1 truncate text-left">{selected || 'Select subject'}</span>
           <ChevronDown
@@ -51,6 +54,7 @@ export default function SubjectSwitcher({
             <Search size={14} className="shrink-0 text-text-faint" />
             <input
               autoFocus
+              aria-label="Search subjects"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search subjects..."
