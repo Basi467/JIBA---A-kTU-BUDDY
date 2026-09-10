@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets
+.env
+frontend/.env
+
+# Database (regenerate via database/seed.py + seed_pyq.py + link_pyq_topics.py, or keep tracked intentionally for a demo deploy)
+database/*.backup-*
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Editor/OS
+.DS_Store
+Thumbs.db
