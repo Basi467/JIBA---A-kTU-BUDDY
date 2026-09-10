@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react'
 import { AlertTriangle, RotateCcw } from 'lucide-react'
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 
@@ -17,9 +18,8 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    // In a real deployment this is where you'd forward to an error-tracking
-    // service (Sentry, etc.) — for now, at least don't lose it silently.
     console.error('Unhandled render error:', error, info.componentStack)
+    Sentry.captureException(error, { extra: { componentStack: info.componentStack } })
   }
 
   handleReload = () => {

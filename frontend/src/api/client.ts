@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react'
 import axios from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
@@ -44,6 +45,11 @@ apiClient.interceptors.response.use(
           window.location.href = '/login'
         }
       }
+    } else if (axios.isAxiosError(error) && (error.response?.status ?? 0) >= 500) {
+      // 4xx are expected user-input/permission outcomes; a 5xx means the
+      // backend broke, which is worth seeing in Sentry same as a frontend
+      // crash would be.
+      Sentry.captureException(error)
     }
     return Promise.reject(error)
   },

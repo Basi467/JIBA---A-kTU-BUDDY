@@ -3,11 +3,13 @@ from __future__ import annotations
 import logging
 import os
 
+import sentry_sdk
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sentry_sdk.integrations.fastapi import FastApiIntegration
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -22,6 +24,16 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
 logger = logging.getLogger("jiba.api")
+
+# No-ops when SENTRY_DSN is unset (the SDK's own documented behavior for a
+# falsy dsn) — so this works identically in dev/CI without the user's own
+# Sentry project, and goes live the moment the env var is set.
+sentry_sdk.init(
+    dsn=os.getenv("SENTRY_DSN"),
+    integrations=[FastApiIntegration()],
+    traces_sample_rate=0.2,
+    send_default_pii=False,
+)
 
 app = FastAPI(title="JIBA - A KTU Buddy API", version="1.0.0")
 
@@ -68,6 +80,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception):
     logger.exception("Unhandled error on %s %s", request.method, request.url.path)
+    # FastAPI's own exception_handler intercepts before Sentry's ASGI
+    # middleware would otherwise see it, so it's reported explicitly here
+    # rather than relying on FastApiIntegration's automatic capture.
+    sentry_sdk.capture_exception(exc)
     return JSONResponse(
         status_code=500,
         content={"detail": "Something went wrong on our end. Please try again."},
