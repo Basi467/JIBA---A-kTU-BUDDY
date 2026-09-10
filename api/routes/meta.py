@@ -9,11 +9,12 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from auth_engine import COMPLETE_SUBJECT_FILTER
+from db_path import get_db_path
 
 router = APIRouter(prefix="/meta", tags=["meta"])
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-DB_PATH = ROOT_DIR / "database" / "ktu.db"
+DB_PATH = get_db_path()
 
 
 class DepartmentOptions(BaseModel):

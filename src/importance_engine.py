@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import sqlite3
 
-DB_PATH = "database/ktu.db"
+from db_path import get_db_path
+
+DB_PATH = get_db_path()
 
 def get_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(DB_PATH)

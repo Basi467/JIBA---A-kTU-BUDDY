@@ -4,7 +4,9 @@ import sqlite3
 from dataclasses import dataclass
 from typing import Optional
 
-DB_PATH = "database/ktu.db"
+from db_path import get_db_path
+
+DB_PATH = get_db_path()
 
 
 @dataclass

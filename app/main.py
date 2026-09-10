@@ -22,8 +22,9 @@ from progress_engine import (
     get_in_progress_topics,
 )
 from module_topic_priority_engine import preview_subject
+from db_path import get_db_path
 
-DB_PATH = ROOT_DIR / "database" / "ktu.db"
+DB_PATH = get_db_path()
 
 
 def get_connection():

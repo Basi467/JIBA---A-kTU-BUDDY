@@ -8,8 +8,10 @@ from typing import Optional
 
 import streamlit as st
 
+from db_path import get_db_path
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
-DB_PATH = ROOT_DIR / "database" / "ktu.db"
+DB_PATH = get_db_path()
 
 SESSION_TTL_DAYS = 30
 

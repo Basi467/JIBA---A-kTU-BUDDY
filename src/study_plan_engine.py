@@ -5,7 +5,9 @@ from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from typing import List, Optional
 
-DB_PATH = "database/ktu.db"
+from db_path import get_db_path
+
+DB_PATH = get_db_path()
 
 
 @dataclass

@@ -6,7 +6,9 @@ import os
 import sqlite3
 from typing import Optional
 
-DB_PATH = "database/ktu.db"
+from db_path import get_db_path
+
+DB_PATH = get_db_path()
 
 PBKDF2_ITERATIONS = 260_000
 

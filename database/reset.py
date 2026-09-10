@@ -1,6 +1,8 @@
 import sqlite3
 
-DB_PATH = 'database/database.db'
+from db import get_db_path
+
+DB_PATH = get_db_path()
 conn = sqlite3.connect(DB_PATH)
 cur = conn.cursor()
 

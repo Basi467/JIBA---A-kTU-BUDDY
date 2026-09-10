@@ -3,3 +3,7 @@ uvicorn[standard]
 python-dotenv
 openai>=1.0
 slowapi
+pytest
+httpx
+sendgrid
+sentry-sdk[fastapi]

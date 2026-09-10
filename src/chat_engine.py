@@ -9,12 +9,14 @@ from typing import List, Optional
 from dotenv import load_dotenv
 from openai import OpenAI
 
+from db_path import get_db_path
+
 # Load environment variables from .env
 load_dotenv()
 
 # Project paths
 ROOT_DIR = Path(__file__).resolve().parent.parent
-DB_PATH = ROOT_DIR / "database" / "ktu.db"
+DB_PATH = get_db_path()
 
 
 @dataclass

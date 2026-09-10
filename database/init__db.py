@@ -1,14 +1,8 @@
-import sqlite3
+from migrate import migrate
 
-DB_PATH = 'database/ktu.db'
-
-conn = sqlite3.connect(DB_PATH)
-cur = conn.cursor()
-
-with open('database/schema.sql', 'r') as f:
-    cur.executescript(f.read())
-
-conn.commit()
-conn.close()
-
-print("Database initialized successfully.")
+if __name__ == "__main__":
+    applied = migrate()
+    if applied:
+        print(f"Database initialized. Applied migrations: {applied}")
+    else:
+        print("Database already up to date.")

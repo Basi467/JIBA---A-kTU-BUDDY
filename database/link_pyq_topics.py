@@ -3,7 +3,9 @@ from __future__ import annotations
 import sqlite3
 from difflib import SequenceMatcher
 
-DB_PATH = "database/ktu.db"
+from db import get_db_path
+
+DB_PATH = get_db_path()
 
 
 def normalize(s: str) -> str:
