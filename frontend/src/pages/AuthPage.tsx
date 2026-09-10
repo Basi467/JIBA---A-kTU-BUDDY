@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { GraduationCap, Loader2, MessageSquareText, Sparkles, Target } from 'lucide-react'
 import { type FormEvent, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { authApi, metaApi } from '../api/endpoints'
 import { apiErrorMessage } from '../api/client'
 import { useAuth } from '../context/AuthContext'
@@ -172,8 +172,11 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className={labelClass}>Email</label>
+        <label htmlFor="login-email" className={labelClass}>
+          Email
+        </label>
         <input
+          id="login-email"
           type="email"
           required
           value={email}
@@ -183,8 +186,16 @@ function LoginForm() {
         />
       </div>
       <div>
-        <label className={labelClass}>Password</label>
+        <div className="flex items-center justify-between">
+          <label htmlFor="login-password" className={labelClass}>
+            Password
+          </label>
+          <Link to="/forgot-password" className="mb-1.5 text-xs font-medium text-accent-2 hover:text-accent">
+            Forgot password?
+          </Link>
+        </div>
         <input
+          id="login-password"
           type="password"
           required
           value={password}

@@ -130,6 +130,35 @@ def get_user_by_id(user_id: int) -> Optional[sqlite3.Row]:
         conn.close()
 
 
+def get_user_by_email(email: str) -> Optional[sqlite3.Row]:
+    conn = get_connection()
+    try:
+        user = conn.execute(
+            """
+            SELECT id, name, email, scheme, department, semester, created_at
+            FROM users
+            WHERE LOWER(email) = LOWER(?)
+            LIMIT 1
+            """,
+            (email.strip(),),
+        ).fetchone()
+        return user
+    finally:
+        conn.close()
+
+
+def set_password(user_id: int, new_password: str) -> None:
+    conn = get_connection()
+    try:
+        conn.execute(
+            "UPDATE users SET password_hash = ? WHERE id = ?",
+            (hash_password(new_password), user_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
 # A subject counts as "complete" when it has the standard 5-module KTU
 # structure AND has past-year questions linked to real topics — i.e. every
 # Exam Mode feature (predicted topics, teach queue, repeated questions) has

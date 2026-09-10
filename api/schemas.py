@@ -41,6 +41,23 @@ class LoginResponse(BaseModel):
     user: UserOut
 
 
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+
+class ForgotPasswordResponse(BaseModel):
+    message: str
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str = Field(min_length=6)
+
+
+class ResetPasswordResponse(BaseModel):
+    message: str
+
+
 # ---------------------------------------------------------------------------
 # Subjects
 # ---------------------------------------------------------------------------

@@ -36,6 +36,16 @@ export const authApi = {
     apiClient.post<{ token: string; user: User }>('/auth/login', { email, password }).then((r) => r.data),
 
   me: () => apiClient.get<User>('/auth/me').then((r) => r.data),
+
+  forgotPassword: (email: string) =>
+    apiClient
+      .post<{ message: string }>('/auth/forgot-password', { email })
+      .then((r) => r.data.message),
+
+  resetPassword: (token: string, newPassword: string) =>
+    apiClient
+      .post<{ message: string }>('/auth/reset-password', { token, new_password: newPassword })
+      .then((r) => r.data.message),
 }
 
 export const subjectsApi = {
