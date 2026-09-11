@@ -269,13 +269,23 @@ Avoid casual conversational tone.
         add_message(session_id, "user", question)
 
         if topic_name:
-            auto_update_progress(
-                user_id=self.user_id,
-                subject_name=subject_name,
-                topic_name=topic_name,
-                interaction_type="asked_question",
-                department=self.department,
-            )
+            # Best-effort activity tracking, not the point of this call — a
+            # topic_name that doesn't exactly match a row in `topics` (e.g.
+            # a PYQ's free-text topic label that was fuzzy-linked to a
+            # differently-worded canonical topic) must not take down the
+            # actual tutor response. Found via api/evals: this raised
+            # uncaught here, which answer_exam_question's outer try/except
+            # then silently swallowed into generic filler text.
+            try:
+                auto_update_progress(
+                    user_id=self.user_id,
+                    subject_name=subject_name,
+                    topic_name=topic_name,
+                    interaction_type="asked_question",
+                    department=self.department,
+                )
+            except ValueError:
+                pass
 
         history = get_chat_history(session_id)
 

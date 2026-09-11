@@ -44,6 +44,29 @@ def test_answer_question_returns_answer(client, auth_headers, seeded_subject, mo
     assert resp.json()["answer"]
 
 
+def test_answer_question_with_unmatched_topic_still_returns_real_answer(
+    client, auth_headers, seeded_subject, mock_openai
+):
+    """Regression test: a `topic` that doesn't exactly match a row in the
+    topics table (e.g. a PYQ's free-text topic label that differs from its
+    fuzzy-linked topic's canonical name) used to make the internal progress-
+    tracking lookup raise, which silently fell through to generic filler
+    text instead of the real AI answer — found by api/evals against the
+    live OpenAI API, since the filler text passed every mocked check here
+    by trivially echoing the question back."""
+    resp = client.post(
+        "/exam/answer-question",
+        json={
+            "subject": "Data Structures",
+            "question_text": "Explain the topic.",
+            "topic": "A Topic Name That Does Not Exist In The Topics Table",
+        },
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["answer"] == "This is a mocked AI response for testing."
+
+
 def test_chat_ask_returns_mocked_reply(client, auth_headers, seeded_subject, mock_openai):
     resp = client.post(
         "/chat/ask",

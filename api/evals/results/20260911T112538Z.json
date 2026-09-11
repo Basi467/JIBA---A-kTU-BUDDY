@@ -1,0 +1,147 @@
+{
+  "timestamp": "2026-09-11T11:25:38.281101+00:00",
+  "git_commit": "d936d01",
+  "mocked": false,
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "results": [
+    {
+      "case_id": "teach-modes-of-communication",
+      "kind": "teach_topic",
+      "status": "PASS",
+      "elapsed_s": 4.48,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "has_simple_explanation": true,
+          "has_exam_answer": true,
+          "has_memory_tip": true,
+          "has_practice_question": true,
+          "key_points_count_in_range": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The response accurately explains the modes of communication with clear definitions, examples, and a helpful mnemonic, making it suitable for KTU exam preparation.",
+        "error": null,
+        "response_preview": "Modes of communication refer to the ways in which data can be transmitted between devices in a network. There are three primary modes: simplex, half duplex, and full duplex. Each mode defines how data flows between two devices, either in one direction or both.\nModes of communication can be classified into three types:\n1. **Simplex**: Data flows in one direction only. Example: A keyboard sending data to a computer.\n2. **Half Duplex**: Data can flow in both directions, but not simultaneously. Exam"
+      }
+    },
+    {
+      "case_id": "teach-signal-encoding",
+      "kind": "teach_topic",
+      "status": "PASS",
+      "elapsed_s": 3.56,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "has_simple_explanation": true,
+          "has_exam_answer": true,
+          "has_memory_tip": true,
+          "has_practice_question": true,
+          "key_points_count_in_range": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The response accurately explains signal encoding, details various encoding schemes, and addresses the request for waveforms, making it suitable for KTU exam preparation.",
+        "error": null,
+        "response_preview": "Signal encoding is the process of converting data into a format suitable for transmission over a physical medium. It involves representing binary data (0s and 1s) as electrical signals, light pulses, or other forms of signals. Different encoding schemes help in reducing errors, ensuring synchronization, and improving data integrity during transmission.\nSignal encoding schemes are essential in the physical layer for transmitting data effectively. Common encoding schemes include:\n1. **Unipolar Enc"
+      }
+    },
+    {
+      "case_id": "teach-bandwidth",
+      "kind": "teach_topic",
+      "status": "PASS",
+      "elapsed_s": 4.09,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "has_simple_explanation": true,
+          "has_exam_answer": true,
+          "has_memory_tip": true,
+          "has_practice_question": true,
+          "key_points_count_in_range": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The response accurately defines bandwidth, explains its measurement, provides a correct formula for transmission time, and includes a relevant example and mnemonic.",
+        "error": null,
+        "response_preview": "Bandwidth refers to the maximum rate at which data can be transmitted over a network channel. It is usually measured in bits per second (bps). A higher bandwidth means more data can be sent in a given time, which leads to faster communication.\nBandwidth is the capacity of a communication channel to transmit data. It is measured in bits per second (bps). For example, if a channel has a bandwidth of 200 Kbps, it can transmit 200,000 bits every second.\nTo calculate the transmission time of a packet"
+      }
+    },
+    {
+      "case_id": "answer-transmission-time",
+      "kind": "answer_question",
+      "status": "PASS",
+      "elapsed_s": 3.06,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "min_length": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The response accurately defines bandwidth, explains the calculation of transmission time clearly, and includes relevant keywords.",
+        "error": null,
+        "response_preview": "### Answer\n\n**Introduction**  \nBandwidth is defined as the maximum rate at which data can be transmitted over a communication channel, typically measured in bits per second (bps). It is a critical factor in determining the speed of data transmission in networks.\n\n**Main Explanation**  \nTo calculate the transmission time of a packet, the following steps are taken:\n\n1. **Packet Size Conversion**: Convert the packet size from bytes to bits.\n   - Given packet size = 1 million bytes = \\(1,000,000 \\ti"
+      }
+    },
+    {
+      "case_id": "answer-bit-stuffing",
+      "kind": "answer_question",
+      "status": "PASS",
+      "elapsed_s": 4.19,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "min_length": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 4,
+        "judge_notes": "The response is mostly accurate but contains a minor error in the bit stuffing process, as the second occurrence of '11111' should not have a '0' inserted after it.",
+        "error": null,
+        "response_preview": "### Answer\n\n**Introduction**  \nBit stuffing is a technique used in the data link layer to ensure that the data being transmitted does not contain the same bit pattern as the frame delimiter (flag). This prevents confusion between the actual data and the flag used to indicate the start and end of a frame.\n\n**Main Explanation**  \nTo determine the string transmitted after bit stuffing, follow these steps:\n\n1. **Identify the Flag**: The flag used for framing is `01111110`.\n\n2. **Locate the Bit Patte"
+      }
+    },
+    {
+      "case_id": "tutor-osi-vs-tcpip",
+      "kind": "ask_tutor",
+      "status": "PASS",
+      "elapsed_s": 4.73,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "min_length": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The response accurately and clearly outlines the differences between the OSI and TCP/IP models, addressing all key aspects relevant to the topic.",
+        "error": null,
+        "response_preview": "### Answer\n\n**Introduction**  \nThe OSI (Open Systems Interconnection) model and the TCP/IP (Transmission Control Protocol/Internet Protocol) model are both conceptual frameworks used to understand and implement networking protocols. They provide a structured approach to networking, but they differ in terms of layers, functionality, and application.\n\n**Main Differences**  \n\n1. **Number of Layers**:\n   - **OSI Model**: Consists of 7 layers: Application, Presentation, Session, Transport, Network, D"
+      }
+    },
+    {
+      "case_id": "tutor-off-topic-redirect",
+      "kind": "ask_tutor",
+      "status": "PASS",
+      "elapsed_s": 1.2,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "min_length": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The tutor appropriately redirected the conversation back to the relevant subject matter.",
+        "error": null,
+        "response_preview": "I'm here to assist you with exam preparation for Computer Networks. If you have any questions or need help with specific topics related to the syllabus, feel free to ask!"
+      }
+    }
+  ]
+}

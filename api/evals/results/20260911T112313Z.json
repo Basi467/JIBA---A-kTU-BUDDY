@@ -1,0 +1,140 @@
+{
+  "timestamp": "2026-09-11T11:23:13.061235+00:00",
+  "git_commit": "d936d01",
+  "mocked": false,
+  "total": 7,
+  "passed": 5,
+  "failed": 2,
+  "results": [
+    {
+      "case_id": "teach-modes-of-communication",
+      "kind": "teach_topic",
+      "status": "PASS",
+      "elapsed_s": 6.25,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "has_simple_explanation": true,
+          "has_exam_answer": true,
+          "has_memory_tip": true,
+          "has_practice_question": true,
+          "key_points_count_in_range": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 4,
+        "judge_notes": "The response accurately describes the modes of communication with examples, but it lacks diagrams as requested and could be more concise.",
+        "error": null
+      }
+    },
+    {
+      "case_id": "teach-signal-encoding",
+      "kind": "teach_topic",
+      "status": "PASS",
+      "elapsed_s": 3.48,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "has_simple_explanation": true,
+          "has_exam_answer": true,
+          "has_memory_tip": true,
+          "has_practice_question": true,
+          "key_points_count_in_range": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The response thoroughly covers signal encoding, accurately describes various schemes, and addresses the request for waveform sketches.",
+        "error": null
+      }
+    },
+    {
+      "case_id": "teach-bandwidth",
+      "kind": "teach_topic",
+      "status": "PASS",
+      "elapsed_s": 4.33,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "has_simple_explanation": true,
+          "has_exam_answer": true,
+          "has_memory_tip": true,
+          "has_practice_question": true,
+          "key_points_count_in_range": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The response thoroughly explains bandwidth, provides accurate calculations, and is relevant to the question asked.",
+        "error": null
+      }
+    },
+    {
+      "case_id": "answer-transmission-time",
+      "kind": "answer_question",
+      "status": "PASS",
+      "elapsed_s": 3.23,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "min_length": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The response accurately explains bandwidth, provides a correct calculation of transmission time, and is relevant for KTU engineering students.",
+        "error": null
+      }
+    },
+    {
+      "case_id": "answer-bit-stuffing",
+      "kind": "answer_question",
+      "status": "FAIL",
+      "elapsed_s": 0.03,
+      "error": null,
+      "score": {
+        "passed": false,
+        "checks": {
+          "min_length": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 1,
+        "judge_notes": "The response does not provide any relevant information or answer the question about bit stuffing.",
+        "error": null
+      }
+    },
+    {
+      "case_id": "tutor-osi-vs-tcpip",
+      "kind": "ask_tutor",
+      "status": "PASS",
+      "elapsed_s": 3.62,
+      "error": null,
+      "score": {
+        "passed": true,
+        "checks": {
+          "min_length": true,
+          "keyword_grounding": true
+        },
+        "judge_score": 5,
+        "judge_notes": "The response accurately and comprehensively explains the differences between the OSI and TCP/IP models, making it suitable for KTU engineering students.",
+        "error": null
+      }
+    },
+    {
+      "case_id": "tutor-off-topic-redirect",
+      "kind": "ask_tutor",
+      "status": "FAIL",
+      "elapsed_s": 1.95,
+      "error": null,
+      "score": {
+        "passed": false,
+        "checks": {
+          "min_length": true
+        },
+        "judge_score": 1,
+        "judge_notes": "The response is completely off-topic and does not address the question about planning a birthday party.",
+        "error": null
+      }
+    }
+  ]
+}
