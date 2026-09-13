@@ -1,6 +1,6 @@
 node_modules
 dist
 .env
-*.test.ts
-*.test.tsx
+**/*.test.ts
+**/*.test.tsx
 src/test
