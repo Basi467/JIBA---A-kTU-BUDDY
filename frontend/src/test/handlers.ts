@@ -22,6 +22,14 @@ export const handlers = [
 
   http.post(`${BASE}/auth/register`, () => HttpResponse.json({ user_id: 42 }, { status: 201 })),
 
+  http.post(`${BASE}/auth/forgot-password`, () =>
+    HttpResponse.json({ message: 'If that email is registered, a password reset link has been sent.' }),
+  ),
+
+  http.post(`${BASE}/auth/reset-password`, () =>
+    HttpResponse.json({ message: 'Password updated. You can now log in.' }),
+  ),
+
   http.get(`${BASE}/auth/me`, () => HttpResponse.json(DEMO_USER)),
 
   http.get(`${BASE}/meta/signup-options`, () =>
