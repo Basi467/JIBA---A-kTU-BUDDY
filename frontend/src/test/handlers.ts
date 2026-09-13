@@ -43,4 +43,62 @@ export const handlers = [
   ),
 
   http.get(`${BASE}/priority/predicted`, () => HttpResponse.json([])),
+
+  http.post(`${BASE}/progress/mark`, () => HttpResponse.json({ status: 'completed' })),
+
+  http.get(`${BASE}/exam/overview`, () =>
+    HttpResponse.json([
+      {
+        module_no: 1,
+        high_priority_topics: ['Linked Lists'],
+        medium_priority_topics: ['Arrays'],
+        low_priority_topics: [],
+        repeated_questions: [
+          { year: 2024, marks: 10, topic_name: 'Linked Lists', question_text: 'Explain linked lists.' },
+        ],
+      },
+    ]),
+  ),
+
+  http.get(`${BASE}/exam/teach-queue`, () =>
+    HttpResponse.json([
+      { module_no: 1, topic_name: 'Linked Lists', priority_label: 'High', question_count: 1, weighted_score: 5 },
+    ]),
+  ),
+
+  http.post(`${BASE}/exam/teach-topic`, () =>
+    HttpResponse.json({
+      simple_explanation: 'A mocked simple explanation.',
+      exam_answer: 'A mocked exam answer.',
+      key_points: ['Point one', 'Point two', 'Point three'],
+      memory_tip: 'A mocked memory tip.',
+      practice_question: 'A mocked practice question?',
+      related_pyqs: [],
+    }),
+  ),
+
+  http.get(`${BASE}/exam/pyq-queue`, () =>
+    HttpResponse.json([
+      { module_no: 1, year: 2024, marks: 10, topic_name: 'Linked Lists', question_text: 'Explain linked lists.' },
+    ]),
+  ),
+
+  http.post(`${BASE}/exam/answer-question`, () => HttpResponse.json({ answer: 'A mocked answer.' })),
+
+  http.post(`${BASE}/study-plan/generate`, () =>
+    HttpResponse.json([
+      {
+        plan_date: '2026-01-01',
+        subject_name: 'Data Structures',
+        module_no: 1,
+        topic_id: 1,
+        topic_name: 'Linked Lists',
+        priority_label: 'High',
+        question_count: 1,
+        weighted_score: 5,
+        recommended_hours: 2,
+        priority_score: 5,
+      },
+    ]),
+  ),
 ]
